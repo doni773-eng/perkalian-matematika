@@ -144,7 +144,6 @@
       z-index: 2;
     }
 
-    /* Panel Keyboard Kiri & Kanan dibuat lebih kecil */
     .player-panel {
       position: absolute;
       top: 110px;
@@ -159,11 +158,21 @@
     .panel-right { right: 15px; background: #7f1d1d; }
 
     .question-row {
-      font-size: 1rem;
+      font-size: 0.85rem;
       font-weight: 800;
       color: #ffffff;
       text-align: center;
       margin-bottom: 4px;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .question-row sup {
+      font-size: 0.75em;
+      vertical-align: super;
+      line-height: 0;
     }
 
     .answer-box {
@@ -180,7 +189,7 @@
     }
 
     .score-badge {
-      font-size: 0.65rem;
+      font-size: 0.75rem;
       font-weight: 700;
       color: #ffffff;
       text-align: center;
@@ -213,7 +222,6 @@
     .key-clear { background: #64748b !important; box-shadow: 0 2px 0 #334155 !important; }
     .key-go { background: #22c55e !important; box-shadow: 0 2px 0 #15803d !important; }
 
-    /* Arena Tarik Tambang */
     .tug-arena {
       position: absolute;
       bottom: 40px;
@@ -293,7 +301,6 @@
       cursor: pointer;
     }
 
-    /* FITUR BARU: Timer per Soal */
     .timer-badge {
       font-size: 0.65rem;
       font-weight: 700;
@@ -302,17 +309,16 @@
       margin-bottom: 4px;
     }
 
-/* Indikator Progres Visual Jarak Kemenangan Presisi Tengah */
     .progress-container {
       width: 260px;
       height: 14px;
       background: linear-gradient(90deg, #3b82f6 50%, #ef4444 50%);
       border-radius: 7px;
-      margin: 8px auto 0 auto; /* Memberikan margin otomatis kiri dan kanan agar tepat di tengah */
+      margin: 8px auto 0 auto;
       position: relative;
       border: 2px solid #ffffff;
       box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      display: block; /* Memastikan elemen berpotongan sejajar sebagai blok pusat */
+      display: block;
     }
 
     .progress-bar-left {
@@ -345,7 +351,6 @@
       z-index: 2;
     }
 
-    /* FITUR BARU: Modal Pengaturan Nama Pemain di Awal */
     .setup-overlay {
       position: absolute;
       inset: 0;
@@ -386,7 +391,7 @@
       margin-bottom: 3px;
     }
 
-    .input-group input {
+    .input-group input, .input-group select {
       width: 100%;
       padding: 6px 10px;
       font-size: 0.8rem;
@@ -408,7 +413,6 @@
       width: 100%;
     }
 
-    /* FITUR BARU: Tabel Statistik Akhir Permainan */
     .stats-table {
       width: 100%;
       margin: 12px 0;
@@ -430,17 +434,32 @@
 </head>
 <body>
 
-  <!-- FITUR BARU: Modal Pengaturan Nama Pemain -->
+  <!-- Modal Pengaturan Pemain -->
   <div class="setup-overlay" id="setupOverlay">
     <div class="setup-modal">
-      <div class="setup-title">🎮 Pengaturan Pemain</div>
+      <div class="setup-title">🎮 Pengaturan Permainan</div>
       <div class="input-group">
         <label for="nameLeftInput">Nama Pemain Kiri (Biru):</label>
-        <input type="text" id="nameLeftInput" value="" maxlength="12">
+        <input type="text" id="nameLeftInput" value="Pemain Kiri" maxlength="12">
       </div>
       <div class="input-group">
         <label for="nameRightInput">Nama Pemain Kanan (Merah):</label>
-        <input type="text" id="nameRightInput" value="" maxlength="12">
+        <input type="text" id="nameRightInput" value="Pemain Kanan" maxlength="12">
+      </div>
+      <div class="input-group">
+        <label for="opModeInput">Pilih Operasi Matematika:</label>
+        <select id="opModeInput">
+          <option value="multiply">Perkalian (×)</option>
+          <option value="add">Penjumlahan (+)</option>
+          <option value="subtract">Pengurangan (-)</option>
+          <option value="divide">Pembagian (÷)</option>
+          <option value="power">Perpangkatan</option>
+          <option value="exponent">Penyederhanaan Eksponen (Variasi Lengkap)</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="timeLimitInput">Batas Waktu Per Soal (Detik):</label>
+        <input type="number" id="timeLimitInput" value="15" min="3" max="60">
       </div>
       <button class="btn-start" onclick="startGame()">Mulai Main!</button>
     </div>
@@ -463,7 +482,6 @@
           <button class="diff-btn" onclick="setDiff(20, this)">Sulit</button>
         </div>
 
-        <!-- FITUR BARU: Indikator Progres Visual Jarak Tali -->
         <div class="progress-container">
           <div class="progress-center-line"></div>
           <div class="progress-bar-left" id="progLeft"></div>
@@ -477,9 +495,8 @@
       <div class="player-panel panel-left">
         <div class="question-row" id="qLeft">2 × 5 = ?</div>
         <div class="answer-box" id="ansLeft"></div>
-        <div class="score-badge" id="scoreLeft">Pemain Kiri: 0</div>
-        <!-- FITUR BARU: Display Waktu Pemain Kiri -->
-        <div class="timer-badge" id="timerLeft">⏱️ Waktu: 10s</div>
+        <div class="score-badge" id="scoreLeft">Pemain Kiri</div>
+        <div class="timer-badge" id="timerLeft">⏱️ Waktu: 15s</div>
         <div class="keypad">
           <button class="key-btn" onclick="press('L','1')">1</button>
           <button class="key-btn" onclick="press('L','2')">2</button>
@@ -500,9 +517,8 @@
       <div class="player-panel panel-right">
         <div class="question-row" id="qRight">1 × 3 = ?</div>
         <div class="answer-box" id="ansRight"></div>
-        <div class="score-badge" id="scoreRight">Pemain Kanan: 0</div>
-        <!-- FITUR BARU: Display Waktu Pemain Kanan -->
-        <div class="timer-badge" id="timerRight">⏱️ Waktu: 10s</div>
+        <div class="score-badge" id="scoreRight">Pemain Kanan</div>
+        <div class="timer-badge" id="timerRight">⏱️ Waktu: 15s</div>
         <div class="keypad">
           <button class="key-btn" onclick="press('R','1')">1</button>
           <button class="key-btn" onclick="press('R','2')">2</button>
@@ -519,14 +535,13 @@
         </div>
       </div>
 
-      <!-- Arena Tarik Tambang (Pakai 1 Gambar Penuh) -->
       <div class="tug-arena">
         <div class="rope-group" id="ropeGroup">
           <img class="full-tug-img" src="https://game.afifedu.com/character.png" alt="Tarik Tambang">
         </div>
       </div>
 
-      <div class="bottom-instruction">Jawab soal untuk menarik tali!</div>
+      <div class="bottom-instruction" id="targetInstruction">Jawab soal dengan cepat untuk menarik tali!</div>
 
       <button class="mute-btn" onclick="toggleMute()">
         <span id="muteIcon">🔊</span> Suara
@@ -536,7 +551,6 @@
         <div class="win-modal">
           <div class="win-title" id="winTitle">PEMAIN KIRI MENANG! 🎉</div>
 
-          <!-- FITUR BARU: Tabel Statistik Hasil Pertandingan -->
           <table class="stats-table">
             <thead>
               <tr>
@@ -569,7 +583,7 @@
             </tbody>
           </table>
 
-          <button class="btn-replay" onclick="resetGame()">Main Lagi</button>
+          <button class="btn-replay" onclick="showSetupModal()">Main Lagi / Ubah Pengaturan</button>
         </div>
       </div>
     </div>
@@ -627,11 +641,11 @@
     let ropePos = 0;
     const WIN_LIMIT = 112;
     const PULL_PIXELS = 16;
-    const QUESTION_TIMEOUT = 15; // Batas waktu per soal (detik)
+    let QUESTION_TIMEOUT = 15;
 
-    // FITUR BARU: Tambahan variabel nama, timer, dan riwayat statistik
     let nameL = 'Pemain Kiri';
     let nameR = 'Pemain Kanan';
+    let opMode = 'multiply';
 
     let pLeft = { 
       n1: 0, n2: 0, ans: 0, score: 0, input: '', 
@@ -642,18 +656,6 @@
       wrong: 0, timer: null, timeLeft: QUESTION_TIMEOUT, startTime: 0, totalTimeSec: 0, attempts: 0 
     };
 
-    /* FITUR BARU: Fungsi Pengaturan Nama di awal permainan */
-    function startGame() {
-      const inL = document.getElementById('nameLeftInput').value.trim();
-      const inR = document.getElementById('nameRightInput').value.trim();
-      if (inL) nameL = inL;
-      if (inR) nameR = inR;
-
-      document.getElementById('setupOverlay').style.display = 'none';
-      resetGame();
-    }
-
-    /* FITUR BARU: Update indikator garis progres visual */
     function updateProgressBar() {
       const leftPercent = Math.max(0, Math.min(100, 50 - (ropePos / WIN_LIMIT) * 50));
       const rightPercent = Math.max(0, Math.min(100, 50 + (ropePos / WIN_LIMIT) * 50));
@@ -667,9 +669,10 @@
       document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       resetGame();
+      generateQ('L');
+      generateQ('R');
     }
 
-    /* FITUR BARU: Sistem Timer Hitung Mundur Per Soal */
     function startQuestionTimer(player) {
       const p = player === 'L' ? pLeft : pRight;
       const timerEl = document.getElementById(player === 'L' ? 'timerLeft' : 'timerRight');
@@ -698,12 +701,77 @@
 
     function generateQ(player) {
       const p = player === 'L' ? pLeft : pRight;
-      p.n1 = Math.floor(Math.random() * maxMultiplier) + 1;
-      p.n2 = Math.floor(Math.random() * maxMultiplier) + 1;
-      p.ans = p.n1 * p.n2;
       p.input = '';
+      let qText = '';
 
-      document.getElementById(player === 'L' ? 'qLeft' : 'qRight').innerText = `${p.n1} × ${p.n2} = ?`;
+      switch (opMode) {
+        case 'add':
+          p.n1 = Math.floor(Math.random() * maxMultiplier) + 1;
+          p.n2 = Math.floor(Math.random() * maxMultiplier) + 1;
+          p.ans = p.n1 + p.n2;
+          qText = `${p.n1} + ${p.n2} = ?`;
+          break;
+        case 'subtract':
+          p.n1 = Math.floor(Math.random() * maxMultiplier) + 1;
+          p.n2 = Math.floor(Math.random() * p.n1) + 1;
+          p.ans = p.n1 - p.n2;
+          qText = `${p.n1} - ${p.n2} = ?`;
+          break;
+        case 'divide':
+          p.n2 = Math.floor(Math.random() * Math.min(10, maxMultiplier)) + 1;
+          p.ans = Math.floor(Math.random() * maxMultiplier) + 1;
+          p.n1 = p.n2 * p.ans;
+          qText = `${p.n1} ÷ ${p.n2} = ?`;
+          break;
+        case 'power':
+          p.n1 = Math.floor(Math.random() * Math.min(10, maxMultiplier)) + 1;
+          p.n2 = Math.floor(Math.random() * 3) + 1;
+          p.ans = Math.pow(p.n1, p.n2);
+          qText = `${p.n1}<sup>${p.n2}</sup> = ?`;
+          break;
+
+        case 'exponent':
+          const type = Math.floor(Math.random() * 5);
+          const base = Math.floor(Math.random() * 5) + 2;
+
+          if (type === 0) {
+            const m = Math.floor(Math.random() * 5) + 1;
+            const n = Math.floor(Math.random() * 5) + 1;
+            p.ans = m + n;
+            qText = `${base}<sup>${m}</sup> × ${base}<sup>${n}</sup> = ${base}<sup>?</sup>`;
+          } else if (type === 1) {
+            const n = Math.floor(Math.random() * 4) + 1;
+            const m = n + Math.floor(Math.random() * 4) + 1;
+            p.ans = m - n;
+            qText = `${base}<sup>${m}</sup> ÷ ${base}<sup>${n}</sup> = ${base}<sup>?</sup>`;
+          } else if (type === 2) {
+            const m = Math.floor(Math.random() * 3) + 2;
+            const n = Math.floor(Math.random() * 3) + 2;
+            p.ans = m * n;
+            qText = `(${base}<sup>${m}</sup>)<sup>${n}</sup> = ${base}<sup>?</sup>`;
+          } else if (type === 3) {
+            const m = Math.floor(Math.random() * 5) + 1;
+            p.ans = 0;
+            qText = `${base}<sup>${m}</sup> ÷ ${base}<sup>${m}</sup> = ${base}<sup>?</sup>`;
+          } else {
+            const m = Math.floor(Math.random() * 4) + 1;
+            const n = Math.floor(Math.random() * 4) + 1;
+            const k = Math.floor(Math.random() * (m + n)) + 1;
+            p.ans = (m + n) - k;
+            qText = `(${base}<sup>${m}</sup> × ${base}<sup>${n}</sup>) ÷ ${base}<sup>${k}</sup> = ${base}<sup>?</sup>`;
+          }
+          break;
+
+        case 'multiply':
+        default:
+          p.n1 = Math.floor(Math.random() * maxMultiplier) + 1;
+          p.n2 = Math.floor(Math.random() * maxMultiplier) + 1;
+          p.ans = p.n1 * p.n2;
+          qText = `${p.n1} × ${p.n2} = ?`;
+          break;
+      }
+
+      document.getElementById(player === 'L' ? 'qLeft' : 'qRight').innerHTML = qText;
       document.getElementById(player === 'L' ? 'ansLeft' : 'ansRight').innerText = '';
 
       startQuestionTimer(player);
@@ -735,24 +803,29 @@
       if (parseInt(p.input, 10) === p.ans) {
         playCorrectSound();
         p.score += 1;
-        document.getElementById(player === 'L' ? 'scoreLeft' : 'scoreRight').innerText = 
-          `${player === 'L' ? nameL : nameR}: ${p.score}`;
 
+        document.getElementById(player === 'L' ? 'scoreLeft' : 'scoreRight').innerText = 
+          `${player === 'L' ? nameL : nameR}`;
+
+        // Menggeser posisi tali/bar
         ropePos += (player === 'L' ? -PULL_PIXELS : PULL_PIXELS);
         document.getElementById('ropeGroup').style.transform = `translateX(${ropePos}px)`;
         updateProgressBar();
 
+        // Pengecekan kemenangan murni berdasarkan ujung bar (habis/mencapai batas WIN_LIMIT)
         if (Math.abs(ropePos) >= WIN_LIMIT) {
           playWinSound();
           clearInterval(pLeft.timer);
           clearInterval(pRight.timer);
 
-          const winName = ropePos < 0 ? nameL : nameR;
+          // Jika ropePos <= -WIN_LIMIT berarti bar biru habis (artinya Pemain Kanan menang karena mendorong ke kiri, atau sebaliknya tergantung sudut pandang, mari kita sesuaikan: bar biru habis jika ropePos >= WIN_LIMIT, bar merah habis jika ropePos <= -WIN_LIMIT)
+          // Berdasarkan kalkulasi progress bar:
+          // leftPercent = 50 - (ropePos / WIN_LIMIT) * 50. Jika ropePos = WIN_LIMIT, leftPercent = 0% (Bar Biru Habis -> Pemain Kanan Menang)
+          // Jika ropePos = -WIN_LIMIT, rightPercent = 0% (Bar Merah Habis -> Pemain Kiri Menang)
+          const winName = ropePos <= -WIN_LIMIT ? nameL : nameR;
           document.getElementById('winTitle').innerText = `${winName.toUpperCase()} MENANG! 🎉`;
 
-          /* FITUR BARU: Menampilkan Statistik Akhir Permainan */
           showStats();
-
           document.getElementById('winOverlay').classList.add('active');
         } else {
           generateQ(player);
@@ -765,7 +838,6 @@
       }
     }
 
-    /* FITUR BARU: Pengolahan & Kalkulasi Statistik */
     function showStats() {
       document.getElementById('statNameLeft').innerText = nameL;
       document.getElementById('statNameRight').innerText = nameR;
@@ -787,6 +859,30 @@
       document.getElementById('statTimeR').innerText = avgTR + 's';
     }
 
+    function showSetupModal() {
+      document.getElementById('winOverlay').classList.remove('active');
+      document.getElementById('setupOverlay').style.display = 'flex';
+    }
+
+    function startGame() {
+      const inL = document.getElementById('nameLeftInput').value.trim();
+      const inR = document.getElementById('nameRightInput').value.trim();
+      const inOp = document.getElementById('opModeInput').value;
+      const inTime = parseInt(document.getElementById('timeLimitInput').value, 10);
+
+      if (inL) nameL = inL;
+      if (inR) nameR = inR;
+      if (inOp) opMode = inOp;
+      if (!isNaN(inTime) && inTime >= 3) QUESTION_TIMEOUT = inTime;
+
+      document.getElementById('targetInstruction').innerText = `Habiskan bar lawan dengan menjawab soal dengan benar!`;
+      document.getElementById('setupOverlay').style.display = 'none';
+
+      resetGame();
+      generateQ('L');
+      generateQ('R');
+    }
+
     function resetGame() {
       clearInterval(pLeft.timer);
       clearInterval(pRight.timer);
@@ -795,14 +891,17 @@
       pLeft.score = 0; pLeft.wrong = 0; pLeft.attempts = 0; pLeft.totalTimeSec = 0;
       pRight.score = 0; pRight.wrong = 0; pRight.attempts = 0; pRight.totalTimeSec = 0;
 
-      document.getElementById('scoreLeft').innerText = `${nameL}: 0`;
-      document.getElementById('scoreRight').innerText = `${nameR}: 0`;
+      document.getElementById('scoreLeft').innerText = nameL;
+      document.getElementById('scoreRight').innerText = nameR;
       document.getElementById('ropeGroup').style.transform = 'translateX(0px)';
       document.getElementById('winOverlay').classList.remove('active');
 
       updateProgressBar();
-      generateQ('L');
-      generateQ('R');
+
+      document.getElementById('qLeft').innerText = '0 × 0 = ?';
+      document.getElementById('qRight').innerText = '0 × 0 = ?';
+      document.getElementById('timerLeft').innerText = `⏱️ Waktu: ${QUESTION_TIMEOUT}s`;
+      document.getElementById('timerRight').innerText = `⏱️ Waktu: ${QUESTION_TIMEOUT}s`;
     }
 
     window.addEventListener('keydown', (e) => {
@@ -811,7 +910,6 @@
       if (e.key === 'Enter') submit('L');
     });
 
-    // Jalankan reset awal
     resetGame();
   </script>
 </body>
