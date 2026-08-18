@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tarik Tambang Matematika</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background: #cbf0ff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .browser-window {
+      width: 100%;
+      max-width: 900px;
+      height: 520px;
+      background: #f0f9ff;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid #bae6fd;
+    }
+
+    .browser-header {
+      height: 34px;
+      background: #e0f2fe;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 12px;
+      border-bottom: 1px solid #bae6fd;
+    }
+
+    .tab {
+      background: #ffffff;
+      padding: 4px 10px;
+      border-radius: 6px 6px 0 0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .address-bar {
+      flex: 1;
+      background: #ffffff;
+      height: 22px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      font-size: 0.7rem;
+      color: #64748b;
+      border: 1px solid #cbd5e1;
+    }
+
+    .game-stage {
+      flex: 1;
+      position: relative;
+      background: linear-gradient(180deg, #dbeafe 0%, #eff6ff 55%, #e0f2fe 55%, #bae6fd 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .floor-curve {
+      position: absolute;
+      bottom: 0;
+      left: -10%;
+      width: 120%;
+      height: 160px;
+      background: #ffffff;
+      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+      opacity: 0.85;
+      z-index: 1;
+    }
+
+    .stage-header {
+      z-index: 5;
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    .game-title {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .difficulty-selector {
+      margin-top: 4px;
+      background: #ffffff;
+      padding: 2px;
+      border-radius: 15px;
+      display: inline-flex;
+      gap: 2px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      border: 1px solid #e2e8f0;
+    }
+
+    .diff-btn {
+      border: none;
+      background: transparent;
+      padding: 3px 8px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #64748b;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .diff-btn.active {
+      background: #1e3a8a;
+      color: #ffffff;
+    }
+
+    .center-dashed-line {
+      position: absolute;
+      top: 80px;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      border-left: 2px dashed #1e3a8a;
+      z-index: 2;
+    }
+
+    /* Panel Keyboard Kiri & Kanan dibuat lebih kecil */
+    .player-panel {
+      position: absolute;
+      top: 110px;
+      width: 150px;
+      border-radius: 10px;
+      padding: 8px;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .panel-left { left: 15px; background: #0f2b48; }
+    .panel-right { right: 15px; background: #7f1d1d; }
+
+    .question-row {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .answer-box {
+      background: #ffffff;
+      height: 26px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .score-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+    }
+
+    .key-btn {
+      background: #3b82f6;
+      border: none;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.75rem;
+      padding: 4px 0;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 0 #1d4ed8;
+    }
+
+    .panel-right .key-btn {
+      background: #ef4444;
+      box-shadow: 0 2px 0 #b91c1c;
+    }
+
+    .key-clear { background: #64748b !important; box-shadow: 0 2px 0 #334155 !important; }
+    .key-go { background: #22c55e !important; box-shadow: 0 2px 0 #15803d !important; }
+
+    /* Arena Tarik Tambang */
+    .tug-arena {
+      position: absolute;
+      bottom: 40px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 3;
+    }
+
+    .rope-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .full-tug-img {
+      height: 120px;
+      object-fit: contain;
+    }
+
+    .bottom-instruction {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #0f172a;
+      z-index: 5;
+      margin-bottom: 5px;
+    }
+
+    .mute-btn {
+      position: absolute;
+      bottom: 8px;
+      right: 10px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 2px 6px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      cursor: pointer;
+      z-index: 20;
+    }
+
+    .win-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .win-overlay.active { display: flex; }
+
+    .win-modal {
+      background: #ffffff;
+      padding: 20px 30px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 450px;
+      width: 90%;
+    }
+
+    .win-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 10px; }
+
+    .btn-replay {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 6px 18px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* FITUR BARU: Timer per Soal */
+    .timer-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #fde047;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+/* Indikator Progres Visual Jarak Kemenangan Presisi Tengah */
+    .progress-container {
+      width: 260px;
+      height: 14px;
+      background: linear-gradient(90deg, #3b82f6 50%, #ef4444 50%);
+      border-radius: 7px;
+      margin: 8px auto 0 auto; /* Memberikan margin otomatis kiri dan kanan agar tepat di tengah */
+      position: relative;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      display: block; /* Memastikan elemen berpotongan sejajar sebagai blok pusat */
+    }
+
+    .progress-bar-left {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 50%;
+      background: #3b82f6;
+      transition: width 0.3s;
+    }
+
+    .progress-bar-right {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 50%;
+      background: #ef4444;
+      transition: width 0.3s;
+    }
+
+    .progress-center-line {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 2px;
+      height: 100%;
+      background: #0f172a;
+      z-index: 2;
+    }
+
+    /* FITUR BARU: Modal Pengaturan Nama Pemain di Awal */
+    .setup-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      z-index: 101;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .setup-modal {
+      background: #ffffff;
+      padding: 20px 25px;
+      border-radius: 12px;
+      text-align: center;
+      width: 320px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .setup-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: #0f172a;
+    }
+
+    .input-group {
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .input-group label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #475569;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .btn-start {
+      background: #22c55e;
+      color: #ffffff;
+      border: none;
+      padding: 8px 20px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 5px;
+      width: 100%;
+    }
+
+    /* FITUR BARU: Tabel Statistik Akhir Permainan */
+    .stats-table {
+      width: 100%;
+      margin: 12px 0;
+      border-collapse: collapse;
+      font-size: 0.7rem;
+    }
+
+    .stats-table th, .stats-table td {
+      border: 1px solid #e2e8f0;
+      padding: 6px;
+      text-align: center;
+    }
+
+    .stats-table th {
+      background: #f1f5f9;
+      color: #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FITUR BARU: Modal Pengaturan Nama Pemain -->
+  <div class="setup-overlay" id="setupOverlay">
+    <div class="setup-modal">
+      <div class="setup-title">🎮 Pengaturan Pemain</div>
+      <div class="input-group">
+        <label for="nameLeftInput">Nama Pemain Kiri (Biru):</label>
+        <input type="text" id="nameLeftInput" value="" maxlength="12">
+      </div>
+      <div class="input-group">
+        <label for="nameRightInput">Nama Pemain Kanan (Merah):</label>
+        <input type="text" id="nameRightInput" value="" maxlength="12">
+      </div>
+      <button class="btn-start" onclick="startGame()">Mulai Main!</button>
+    </div>
+  </div>
+
+  <div class="browser-window">
+    <div class="browser-header">
+      <div class="tab">🧩 Tarik Tambang Matematika</div>
+      <div class="address-bar">DONI STIAWAN, S.MAT</div>
+    </div>
+
+    <div class="game-stage">
+      <div class="floor-curve"></div>
+
+      <div class="stage-header">
+        <h1 class="game-title">Tarik Tambang Matematika</h1>
+        <div class="difficulty-selector">
+          <button class="diff-btn" onclick="setDiff(5, this)">Mudah</button>
+          <button class="diff-btn active" onclick="setDiff(10, this)">Sedang</button>
+          <button class="diff-btn" onclick="setDiff(20, this)">Sulit</button>
+        </div>
+
+        <!-- FITUR BARU: Indikator Progres Visual Jarak Tali -->
+        <div class="progress-container">
+          <div class="progress-center-line"></div>
+          <div class="progress-bar-left" id="progLeft"></div>
+          <div class="progress-bar-right" id="progRight"></div>
+        </div>
+      </div>
+
+      <div class="center-dashed-line"></div>
+
+      <!-- Pemain Kiri -->
+      <div class="player-panel panel-left">
+        <div class="question-row" id="qLeft">2 × 5 = ?</div>
+        <div class="answer-box" id="ansLeft"></div>
+        <div class="score-badge" id="scoreLeft">Pemain Kiri: 0</div>
+        <!-- FITUR BARU: Display Waktu Pemain Kiri -->
+        <div class="timer-badge" id="timerLeft">⏱️ Waktu: 10s</div>
+        <div class="keypad">
+          <button class="key-btn" onclick="press('L','1')">1</button>
+          <button class="key-btn" onclick="press('L','2')">2</button>
+          <button class="key-btn" onclick="press('L','3')">3</button>
+          <button class="key-btn" onclick="press('L','4')">4</button>
+          <button class="key-btn" onclick="press('L','5')">5</button>
+          <button class="key-btn" onclick="press('L','6')">6</button>
+          <button class="key-btn" onclick="press('L','7')">7</button>
+          <button class="key-btn" onclick="press('L','8')">8</button>
+          <button class="key-btn" onclick="press('L','9')">9</button>
+          <button class="key-btn key-clear" onclick="press('L','C')">C</button>
+          <button class="key-btn" onclick="press('L','0')">0</button>
+          <button class="key-btn key-go" onclick="submit('L')">Go</button>
+        </div>
+      </div>
+
+      <!-- Pemain Kanan -->
+      <div class="player-panel panel-right">
+        <div class="question-row" id="qRight">1 × 3 = ?</div>
+        <div class="answer-box" id="ansRight"></div>
+        <div class="score-badge" id="scoreRight">Pemain Kanan: 0</div>
+        <!-- FITUR BARU: Display Waktu Pemain Kanan -->
+        <div class="timer-badge" id="timerRight">⏱️ Waktu: 10s</div>
+        <div class="keypad">
+          <button class="key-btn" onclick="press('R','1')">1</button>
+          <button class="key-btn" onclick="press('R','2')">2</button>
+          <button class="key-btn" onclick="press('R','3')">3</button>
+          <button class="key-btn" onclick="press('R','4')">4</button>
+          <button class="key-btn" onclick="press('R','5')">5</button>
+          <button class="key-btn" onclick="press('R','6')">6</button>
+          <button class="key-btn" onclick="press('R','7')">7</button>
+          <button class="key-btn" onclick="press('R','8')">8</button>
+          <button class="key-btn" onclick="press('R','9')">9</button>
+          <button class="key-btn key-clear" onclick="press('R','C')">C</button>
+          <button class="key-btn" onclick="press('R','0')">0</button>
+          <button class="key-btn key-go" onclick="submit('R')">Go</button>
+        </div>
+      </div>
+
+      <!-- Arena Tarik Tambang (Pakai 1 Gambar Penuh) -->
+      <div class="tug-arena">
+        <div class="rope-group" id="ropeGroup">
+          <img class="full-tug-img" src="https://game.afifedu.com/character.png" alt="Tarik Tambang">
+        </div>
+      </div>
+
+      <div class="bottom-instruction">Jawab soal untuk menarik tali!</div>
+
+      <button class="mute-btn" onclick="toggleMute()">
+        <span id="muteIcon">🔊</span> Suara
+      </button>
+
+      <div class="win-overlay" id="winOverlay">
+        <div class="win-modal">
+          <div class="win-title" id="winTitle">PEMAIN KIRI MENANG! 🎉</div>
+
+          <!-- FITUR BARU: Tabel Statistik Hasil Pertandingan -->
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th>Statistik</th>
+                <th id="statNameLeft">Pemain Kiri</th>
+                <th id="statNameRight">Pemain Kanan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Jawaban Benar</td>
+                <td id="statCorrectL">0</td>
+                <td id="statCorrectR">0</td>
+              </tr>
+              <tr>
+                <td>Jawaban Salah</td>
+                <td id="statWrongL">0</td>
+                <td id="statWrongR">0</td>
+              </tr>
+              <tr>
+                <td>Akurasi</td>
+                <td id="statAccL">0%</td>
+                <td id="statAccR">0%</td>
+              </tr>
+              <tr>
+                <td>Rata-rata Waktu</td>
+                <td id="statTimeL">0s</td>
+                <td id="statTimeR">0s</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <button class="btn-replay" onclick="resetGame()">Main Lagi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let audioCtx = null;
+    let isMuted = false;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playTone(freq, duration, type = 'sine') {
+      if (isMuted) return;
+      initAudio();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playCorrectSound() {
+      playTone(523.25, 0.1);
+      setTimeout(() => playTone(659.25, 0.15), 80);
+    }
+
+    function playWrongSound() {
+      playTone(180, 0.2, 'sawtooth');
+    }
+
+    function playWinSound() {
+      [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+        setTimeout(() => playTone(f, 0.25), i * 120);
+      });
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      document.getElementById('muteIcon').innerText = isMuted ? '🔇' : '🔊';
+    }
+
+    let maxMultiplier = 10;
+    let ropePos = 0;
+    const WIN_LIMIT = 112;
+    const PULL_PIXELS = 16;
+    const QUESTION_TIMEOUT = 15; // Batas waktu per soal (detik)
+
+    // FITUR BARU: Tambahan variabel nama, timer, dan riwayat statistik
+    let nameL = 'Pemain Kiri';
+    let nameR = 'Pemain Kanan';
+
+    let pLeft = { 
+      n1: 0, n2: 0, ans: 0, score: 0, input: '', 
+      wrong: 0, timer: null, timeLeft: QUESTION_TIMEOUT, startTime: 0, totalTimeSec: 0, attempts: 0 
+    };
+    let pRight = { 
+      n1: 0, n2: 0, ans: 0, score: 0, input: '', 
+      wrong: 0, timer: null, timeLeft: QUESTION_TIMEOUT, startTime: 0, totalTimeSec: 0, attempts: 0 
+    };
+
+    /* FITUR BARU: Fungsi Pengaturan Nama di awal permainan */
+    function startGame() {
+      const inL = document.getElementById('nameLeftInput').value.trim();
+      const inR = document.getElementById('nameRightInput').value.trim();
+      if (inL) nameL = inL;
+      if (inR) nameR = inR;
+
+      document.getElementById('setupOverlay').style.display = 'none';
+      resetGame();
+    }
+
+    /* FITUR BARU: Update indikator garis progres visual */
+    function updateProgressBar() {
+      const leftPercent = Math.max(0, Math.min(100, 50 - (ropePos / WIN_LIMIT) * 50));
+      const rightPercent = Math.max(0, Math.min(100, 50 + (ropePos / WIN_LIMIT) * 50));
+
+      document.getElementById('progLeft').style.width = leftPercent + '%';
+      document.getElementById('progRight').style.width = rightPercent + '%';
+    }
+
+    function setDiff(max, btn) {
+      maxMultiplier = max;
+      document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      resetGame();
+    }
+
+    /* FITUR BARU: Sistem Timer Hitung Mundur Per Soal */
+    function startQuestionTimer(player) {
+      const p = player === 'L' ? pLeft : pRight;
+      const timerEl = document.getElementById(player === 'L' ? 'timerLeft' : 'timerRight');
+      
+      clearInterval(p.timer);
+      p.timeLeft = QUESTION_TIMEOUT;
+      p.startTime = Date.now();
+      timerEl.innerText = `⏱️ Waktu: ${p.timeLeft}s`;
+
+      p.timer = setInterval(() => {
+        p.timeLeft--;
+        timerEl.innerText = `⏱️ Waktu: ${p.timeLeft}s`;
+
+        if (p.timeLeft <= 0) {
+          clearInterval(p.timer);
+          playWrongSound();
+          p.wrong++;
+          p.attempts++;
+          p.totalTimeSec += QUESTION_TIMEOUT;
+          p.input = '';
+          document.getElementById(player === 'L' ? 'ansLeft' : 'ansRight').innerText = '';
+          generateQ(player);
+        }
+      }, 1000);
+    }
+
+    function generateQ(player) {
+      const p = player === 'L' ? pLeft : pRight;
+      p.n1 = Math.floor(Math.random() * maxMultiplier) + 1;
+      p.n2 = Math.floor(Math.random() * maxMultiplier) + 1;
+      p.ans = p.n1 * p.n2;
+      p.input = '';
+
+      document.getElementById(player === 'L' ? 'qLeft' : 'qRight').innerText = `${p.n1} × ${p.n2} = ?`;
+      document.getElementById(player === 'L' ? 'ansLeft' : 'ansRight').innerText = '';
+
+      startQuestionTimer(player);
+    }
+
+    function press(player, key) {
+      initAudio();
+      const p = player === 'L' ? pLeft : pRight;
+      const display = document.getElementById(player === 'L' ? 'ansLeft' : 'ansRight');
+
+      if (key === 'C') {
+        p.input = '';
+      } else if (p.input.length < 3) {
+        p.input += key;
+      }
+      display.innerText = p.input;
+    }
+
+    function submit(player) {
+      const p = player === 'L' ? pLeft : pRight;
+      const display = document.getElementById(player === 'L' ? 'ansLeft' : 'ansRight');
+
+      if (!p.input) return;
+
+      const timeSpent = (Date.now() - p.startTime) / 1000;
+      p.totalTimeSec += timeSpent;
+      p.attempts++;
+
+      if (parseInt(p.input, 10) === p.ans) {
+        playCorrectSound();
+        p.score += 1;
+        document.getElementById(player === 'L' ? 'scoreLeft' : 'scoreRight').innerText = 
+          `${player === 'L' ? nameL : nameR}: ${p.score}`;
+
+        ropePos += (player === 'L' ? -PULL_PIXELS : PULL_PIXELS);
+        document.getElementById('ropeGroup').style.transform = `translateX(${ropePos}px)`;
+        updateProgressBar();
+
+        if (Math.abs(ropePos) >= WIN_LIMIT) {
+          playWinSound();
+          clearInterval(pLeft.timer);
+          clearInterval(pRight.timer);
+
+          const winName = ropePos < 0 ? nameL : nameR;
+          document.getElementById('winTitle').innerText = `${winName.toUpperCase()} MENANG! 🎉`;
+
+          /* FITUR BARU: Menampilkan Statistik Akhir Permainan */
+          showStats();
+
+          document.getElementById('winOverlay').classList.add('active');
+        } else {
+          generateQ(player);
+        }
+      } else {
+        playWrongSound();
+        p.wrong++;
+        p.input = '';
+        display.innerText = '';
+      }
+    }
+
+    /* FITUR BARU: Pengolahan & Kalkulasi Statistik */
+    function showStats() {
+      document.getElementById('statNameLeft').innerText = nameL;
+      document.getElementById('statNameRight').innerText = nameR;
+
+      document.getElementById('statCorrectL').innerText = pLeft.score;
+      document.getElementById('statCorrectR').innerText = pRight.score;
+
+      document.getElementById('statWrongL').innerText = pLeft.wrong;
+      document.getElementById('statWrongR').innerText = pRight.wrong;
+
+      const accL = pLeft.attempts > 0 ? Math.round((pLeft.score / pLeft.attempts) * 100) : 0;
+      const accR = pRight.attempts > 0 ? Math.round((pRight.score / pRight.attempts) * 100) : 0;
+      document.getElementById('statAccL').innerText = accL + '%';
+      document.getElementById('statAccR').innerText = accR + '%';
+
+      const avgTL = pLeft.attempts > 0 ? (pLeft.totalTimeSec / pLeft.attempts).toFixed(1) : 0;
+      const avgTR = pRight.attempts > 0 ? (pRight.totalTimeSec / pRight.attempts).toFixed(1) : 0;
+      document.getElementById('statTimeL').innerText = avgTL + 's';
+      document.getElementById('statTimeR').innerText = avgTR + 's';
+    }
+
+    function resetGame() {
+      clearInterval(pLeft.timer);
+      clearInterval(pRight.timer);
+
+      ropePos = 0;
+      pLeft.score = 0; pLeft.wrong = 0; pLeft.attempts = 0; pLeft.totalTimeSec = 0;
+      pRight.score = 0; pRight.wrong = 0; pRight.attempts = 0; pRight.totalTimeSec = 0;
+
+      document.getElementById('scoreLeft').innerText = `${nameL}: 0`;
+      document.getElementById('scoreRight').innerText = `${nameR}: 0`;
+      document.getElementById('ropeGroup').style.transform = 'translateX(0px)';
+      document.getElementById('winOverlay').classList.remove('active');
+
+      updateProgressBar();
+      generateQ('L');
+      generateQ('R');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key >= '0' && e.key <= '9') press('L', e.key);
+      if (e.key === 'Backspace') press('L', 'C');
+      if (e.key === 'Enter') submit('L');
+    });
+
+    // Jalankan reset awal
+    resetGame();
+  </script>
+</body>
+</html>
