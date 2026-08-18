@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tarik Tambang Matematika</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Game Edukasi Matematika</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * {
@@ -12,6 +12,7 @@
       padding: 0;
       font-family: 'Poppins', sans-serif;
       user-select: none;
+      -webkit-user-select: none;
     }
 
     body {
@@ -20,14 +21,15 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 10px;
-      overflow: hidden;
+      padding: 5px;
+      overflow-x: hidden;
     }
 
     .browser-window {
       width: 100%;
-      max-width: 900px;
-      height: 520px;
+      max-width: 1000px;
+      height: 100vh;
+      max-height: 650px;
       background: #f0f9ff;
       border-radius: 12px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -46,6 +48,7 @@
       padding: 0 12px;
       gap: 12px;
       border-bottom: 1px solid #bae6fd;
+      flex-shrink: 0;
     }
 
     .tab {
@@ -78,7 +81,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: 10px;
+      padding: 8px;
       overflow: hidden;
     }
 
@@ -87,7 +90,7 @@
       bottom: 0;
       left: -10%;
       width: 120%;
-      height: 160px;
+      height: 130px;
       background: #ffffff;
       border-radius: 50% 50% 0 0 / 100% 100% 0 0;
       opacity: 0.85;
@@ -97,17 +100,17 @@
     .stage-header {
       z-index: 5;
       text-align: center;
-      margin-top: 2px;
+      width: 100%;
     }
 
     .game-title {
-      font-size: 1.3rem;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
       font-weight: 900;
       color: #0f172a;
     }
 
     .difficulty-selector {
-      margin-top: 4px;
+      margin-top: 2px;
       background: #ffffff;
       padding: 2px;
       border-radius: 15px;
@@ -120,8 +123,8 @@
     .diff-btn {
       border: none;
       background: transparent;
-      padding: 3px 8px;
-      font-size: 0.65rem;
+      padding: 2px 8px;
+      font-size: 0.6rem;
       font-weight: 700;
       color: #64748b;
       border-radius: 12px;
@@ -135,8 +138,8 @@
 
     .center-dashed-line {
       position: absolute;
-      top: 80px;
-      bottom: 40px;
+      top: 75px;
+      bottom: 35px;
       left: 50%;
       transform: translateX(-50%);
       width: 0;
@@ -147,23 +150,23 @@
     .player-panel {
       position: absolute;
       top: 110px;
-      width: 150px;
+      width: 145px;
       border-radius: 10px;
-      padding: 8px;
+      padding: 6px;
       z-index: 10;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
-    .panel-left { left: 15px; background: #0f2b48; }
-    .panel-right { right: 15px; background: #7f1d1d; }
+    .panel-left { left: 100px; background: #0f2b48; }
+    .panel-right { right: 100px; background: #7f1d1d; }
 
     .question-row {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 800;
       color: #ffffff;
       text-align: center;
-      margin-bottom: 4px;
-      min-height: 32px;
+      margin-bottom: 3px;
+      min-height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -173,33 +176,46 @@
       font-size: 0.75em;
       vertical-align: super;
       line-height: 0;
+      position: relative;
+      top: -2px;
     }
 
     .answer-box {
       background: #ffffff;
-      height: 26px;
+      height: 24px;
       border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 800;
       color: #0f172a;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .score-badge {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       color: #ffffff;
       text-align: center;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .timer-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: #fde047;
+      text-align: center;
+      margin-bottom: 3px;
     }
 
     .keypad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 3px;
+      gap: 2px;
     }
 
     .key-btn {
@@ -207,8 +223,8 @@
       border: none;
       color: #ffffff;
       font-weight: 800;
-      font-size: 0.75rem;
-      padding: 4px 0;
+      font-size: 0.7rem;
+      padding: 5px 0;
       border-radius: 4px;
       cursor: pointer;
       box-shadow: 0 2px 0 #1d4ed8;
@@ -222,9 +238,10 @@
     .key-clear { background: #64748b !important; box-shadow: 0 2px 0 #334155 !important; }
     .key-go { background: #22c55e !important; box-shadow: 0 2px 0 #15803d !important; }
 
+    /* Arena Tarik Tambang */
     .tug-arena {
       position: absolute;
-      bottom: 40px;
+      bottom: 35px;
       width: 100%;
       display: flex;
       justify-content: center;
@@ -240,27 +257,88 @@
     }
 
     .full-tug-img {
-      height: 120px;
+      height: 95px;
       object-fit: contain;
     }
 
+    /* Arena Panjat Pinang */
+    .pinang-arena {
+      position: absolute;
+      bottom: 25px;
+      width: 100%;
+      height: 220px;
+      display: none;
+      justify-content: center;
+      gap: 120px;
+      align-items: flex-end;
+      z-index: 3;
+      padding: 0;
+    }
+    
+    .pinang-pole-container {
+      position: relative;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      width: 60px;
+    }
+
+    .pinang-tiang {
+      height: 100%;
+      object-fit: contain;
+      z-index: 1;
+    }
+
+    .pinang-player {
+      position: absolute;
+      bottom: 0px;
+      height: 55px;
+      object-fit: contain;
+      z-index: 2;
+      transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* Pengaturan Posisi Khusus Berdiri (Asset 3 & 4: Tegak di samping tiang) */
+    #pinangPlayerLeft.standing {
+      left: 50%;
+      transform: translateX(-40px);
+    }
+
+    #pinangPlayerRight.standing {
+      left: 50%;
+      transform: translateX(12px);
+    }
+
+    /* Pengaturan Posisi Khusus Memanjat (Asset 1 & 2: Mepet dengan pohon) */
+    #pinangPlayerLeft.climbing {
+      left: 50%;
+      transform: translateX(-24px);
+    }
+
+    #pinangPlayerRight.climbing {
+      left: 50%;
+      transform: translateX(-16px);
+    }
+
     .bottom-instruction {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 800;
       color: #0f172a;
       z-index: 5;
-      margin-bottom: 5px;
+      margin-bottom: 4px;
+      text-align: center;
     }
 
     .mute-btn {
       position: absolute;
-      bottom: 8px;
-      right: 10px;
+      bottom: 6px;
+      right: 8px;
       background: rgba(255,255,255,0.9);
       border: 1px solid #cbd5e1;
       border-radius: 12px;
       padding: 2px 6px;
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 700;
       cursor: pointer;
       z-index: 20;
@@ -271,158 +349,150 @@
       inset: 0;
       background: rgba(15, 23, 42, 0.85);
       z-index: 100;
-      display: none;
+      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      padding: 10px;
+      display: none;
     }
 
     .win-overlay.active { display: flex; }
 
     .win-modal {
       background: #ffffff;
-      padding: 20px 30px;
+      padding: 16px 20px;
       border-radius: 12px;
       text-align: center;
-      max-width: 450px;
-      width: 90%;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
-    .win-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 10px; }
+    .win-title { 
+      font-size: 1.1rem; 
+      font-weight: 900; 
+      margin-bottom: 10px; 
+      color: #0f172a;
+    }
 
     .btn-replay {
       background: #2563eb;
       color: #ffffff;
       border: none;
-      padding: 6px 18px;
+      padding: 8px 16px;
       font-size: 0.8rem;
       font-weight: 800;
       border-radius: 6px;
       cursor: pointer;
-    }
-
-    .timer-badge {
-      font-size: 0.65rem;
-      font-weight: 700;
-      color: #fde047;
-      text-align: center;
-      margin-bottom: 4px;
-    }
-
-    .progress-container {
-      width: 260px;
-      height: 14px;
-      background: linear-gradient(90deg, #3b82f6 50%, #ef4444 50%);
-      border-radius: 7px;
-      margin: 8px auto 0 auto;
-      position: relative;
-      border: 2px solid #ffffff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      display: block;
-    }
-
-    .progress-bar-left {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 50%;
-      background: #3b82f6;
-      transition: width 0.3s;
-    }
-
-    .progress-bar-right {
-      position: absolute;
-      top: 0;
-      right: 0;
-      height: 100%;
-      width: 50%;
-      background: #ef4444;
-      transition: width 0.3s;
-    }
-
-    .progress-center-line {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      width: 2px;
-      height: 100%;
-      background: #0f172a;
-      z-index: 2;
+      width: 100%;
+      margin-top: 5px;
     }
 
     .setup-overlay {
       position: absolute;
       inset: 0;
-      background: rgba(15, 23, 42, 0.85);
-      z-index: 101;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 58, 138, 0.9));
+      z-index: 100;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      padding: 15px;
+      backdrop-filter: blur(10px);
     }
 
     .setup-modal {
       background: #ffffff;
-      padding: 20px 25px;
-      border-radius: 12px;
+      padding: 24px;
+      border-radius: 20px;
       text-align: center;
-      width: 320px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      max-height: 95vh;
+      overflow-y: auto;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    .setup-title {
-      font-size: 1.1rem;
-      font-weight: 800;
-      margin-bottom: 12px;
-      color: #0f172a;
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .setup-title { 
+      font-size: 1.4rem; 
+      font-weight: 900; 
+      margin-bottom: 16px; 
+      color: #1e3a8a;
+      background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .input-group {
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       text-align: left;
     }
 
     .input-group label {
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      color: #475569;
+      color: #334155;
       display: block;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
 
     .input-group input, .input-group select {
       width: 100%;
-      padding: 6px 10px;
-      font-size: 0.8rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
       outline: none;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+
+    .input-group input:focus, .input-group select:focus {
+      border-color: #3b82f6;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
     }
 
     .btn-start {
-      background: #22c55e;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
       color: #ffffff;
       border: none;
-      padding: 8px 20px;
-      font-size: 0.85rem;
+      padding: 12px 16px;
+      font-size: 0.95rem;
       font-weight: 800;
-      border-radius: 6px;
+      border-radius: 12px;
       cursor: pointer;
-      margin-top: 5px;
       width: 100%;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-start:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.6);
     }
 
     .stats-table {
       width: 100%;
-      margin: 12px 0;
+      margin: 8px 0;
       border-collapse: collapse;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
     }
 
     .stats-table th, .stats-table td {
       border: 1px solid #e2e8f0;
-      padding: 6px;
+      padding: 4px;
       text-align: center;
     }
 
@@ -430,24 +500,63 @@
       background: #f1f5f9;
       color: #334155;
     }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 0;
+        align-items: flex-start;
+      }
+      .browser-window {
+        height: 100vh;
+        max-height: none;
+        border-radius: 0;
+        border: none;
+      }
+      .player-panel {
+        width: 130px;
+        top: 85px;
+      }
+      .panel-left { left: 5px; }
+      .panel-right { right: 5px; }
+      .full-tug-img {
+        height: 80px;
+      }
+      .pinang-arena {
+        padding: 0 20px;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Modal Pengaturan Pemain -->
+  <!-- Modal Pengaturan Pemain & Pilihan Game -->
   <div class="setup-overlay" id="setupOverlay">
     <div class="setup-modal">
-      <div class="setup-title">🎮 Pengaturan Permainan</div>
+      <div class="setup-title" id="mainModalTitle">🎮 Game Edukasi Matematika</div>
       <div class="input-group">
-        <label for="nameLeftInput">Nama Pemain Kiri (Biru):</label>
+        <label for="gameModeInput">🕹️ Pilih Jenis Permainan:</label>
+        <select id="gameModeInput" onchange="handleModeChange()">
+          <option value="tug">Tarik Tambang</option>
+          <option value="pinang">Panjat Pinang</option>
+        </select>
+      </div>
+
+      <!-- Pengaturan Khusus Panjat Pinang: Target Jumlah Soal Benar -->
+      <div class="input-group" id="pinangTargetGroup" style="display: none;">
+        <label for="pinangTargetInput">🎯 Target Jumlah Soal Benar untuk Menang (Panjat Pinang):</label>
+        <input type="number" id="pinangTargetInput" value="10" min="1" max="50">
+      </div>
+
+      <div class="input-group">
+        <label for="nameLeftInput">👤 Nama Pemain Kiri (Biru):</label>
         <input type="text" id="nameLeftInput" value="Pemain Kiri" maxlength="12">
       </div>
       <div class="input-group">
-        <label for="nameRightInput">Nama Pemain Kanan (Merah):</label>
+        <label for="nameRightInput">👤 Nama Pemain Kanan (Merah):</label>
         <input type="text" id="nameRightInput" value="Pemain Kanan" maxlength="12">
       </div>
       <div class="input-group">
-        <label for="opModeInput">Pilih Operasi Matematika:</label>
+        <label for="opModeInput">⚙️ Pilih Operasi Matematika:</label>
         <select id="opModeInput">
           <option value="multiply">Perkalian (×)</option>
           <option value="add">Penjumlahan (+)</option>
@@ -458,16 +567,16 @@
         </select>
       </div>
       <div class="input-group">
-        <label for="timeLimitInput">Batas Waktu Per Soal (Detik):</label>
+        <label for="timeLimitInput">⏱️ Batas Waktu Per Soal (Detik):</label>
         <input type="number" id="timeLimitInput" value="15" min="3" max="60">
       </div>
-      <button class="btn-start" onclick="startGame()">Mulai Main!</button>
+      <button class="btn-start" onclick="startGame()">Mulai Main Sekarang! 🚀</button>
     </div>
   </div>
 
   <div class="browser-window">
     <div class="browser-header">
-      <div class="tab">🧩 Tarik Tambang Matematika</div>
+      <div class="tab" id="browserTabTitle">🧩 Tarik Tambang Matematika</div>
       <div class="address-bar">DONI STIAWAN, S.MAT</div>
     </div>
 
@@ -475,21 +584,15 @@
       <div class="floor-curve"></div>
 
       <div class="stage-header">
-        <h1 class="game-title">Tarik Tambang Matematika</h1>
+        <h1 class="game-title" id="stageGameTitle">Tarik Tambang Matematika</h1>
         <div class="difficulty-selector">
           <button class="diff-btn" onclick="setDiff(5, this)">Mudah</button>
           <button class="diff-btn active" onclick="setDiff(10, this)">Sedang</button>
           <button class="diff-btn" onclick="setDiff(20, this)">Sulit</button>
         </div>
-
-        <div class="progress-container">
-          <div class="progress-center-line"></div>
-          <div class="progress-bar-left" id="progLeft"></div>
-          <div class="progress-bar-right" id="progRight"></div>
-        </div>
       </div>
 
-      <div class="center-dashed-line"></div>
+      <div class="center-dashed-line" id="centerDashedLine"></div>
 
       <!-- Pemain Kiri -->
       <div class="player-panel panel-left">
@@ -535,9 +638,24 @@
         </div>
       </div>
 
-      <div class="tug-arena">
+      <!-- Arena Tarik Tambang -->
+      <div class="tug-arena" id="tugArena">
         <div class="rope-group" id="ropeGroup">
           <img class="full-tug-img" src="https://game.afifedu.com/character.png" alt="Tarik Tambang">
+        </div>
+      </div>
+
+      <!-- Arena Panjat Pinang -->
+      <div class="pinang-arena" id="pinangArena">
+        <!-- Tiang Kiri (Tim Biru) -->
+        <div class="pinang-pole-container">
+          <img class="pinang-tiang" src="https://game.afifedu.com/panjat_pinang/tiang.png" alt="Tiang Kiri">
+          <img class="pinang-player standing" id="pinangPlayerLeft" src="https://game.afifedu.com/panjat_pinang/standleft.png" alt="Tim Biru Berdiri">
+        </div>
+        <!-- Tiang Kanan (Tim Merah) -->
+        <div class="pinang-pole-container">
+          <img class="pinang-tiang" src="https://game.afifedu.com/panjat_pinang/tiang.png" alt="Tiang Kanan">
+          <img class="pinang-player standing" id="pinangPlayerRight" src="https://game.afifedu.com/panjat_pinang/standright.png" alt="Tim Merah Berdiri">
         </div>
       </div>
 
@@ -637,10 +755,20 @@
       document.getElementById('muteIcon').innerText = isMuted ? '🔇' : '🔊';
     }
 
+    let gameMode = 'tug';
     let maxMultiplier = 10;
+    
+    // Variabel Tarik Tambang
     let ropePos = 0;
-    const WIN_LIMIT = 112;
+    const WIN_LIMIT_TUG = 112;
     const PULL_PIXELS = 16;
+
+    // Variabel Panjat Pinang
+    let pinangPosL = 0; 
+    let pinangPosR = 0; 
+    const WIN_LIMIT_PINANG = 130; 
+    let targetPinangQuestions = 10; 
+
     let QUESTION_TIMEOUT = 15;
 
     let nameL = 'Pemain Kiri';
@@ -656,12 +784,14 @@
       wrong: 0, timer: null, timeLeft: QUESTION_TIMEOUT, startTime: 0, totalTimeSec: 0, attempts: 0 
     };
 
-    function updateProgressBar() {
-      const leftPercent = Math.max(0, Math.min(100, 50 - (ropePos / WIN_LIMIT) * 50));
-      const rightPercent = Math.max(0, Math.min(100, 50 + (ropePos / WIN_LIMIT) * 50));
-
-      document.getElementById('progLeft').style.width = leftPercent + '%';
-      document.getElementById('progRight').style.width = rightPercent + '%';
+    function handleModeChange() {
+      const mode = document.getElementById('gameModeInput').value;
+      const targetGroup = document.getElementById('pinangTargetGroup');
+      if (mode === 'pinang') {
+        targetGroup.style.display = 'block';
+      } else {
+        targetGroup.style.display = 'none';
+      }
     }
 
     function setDiff(max, btn) {
@@ -694,6 +824,15 @@
           p.totalTimeSec += QUESTION_TIMEOUT;
           p.input = '';
           document.getElementById(player === 'L' ? 'ansLeft' : 'ansRight').innerText = '';
+          
+          // Ubah kembali ke posisi berdiri (asset 3 atau 4) saat waktu habis / salah
+          const imgEl = document.getElementById(player === 'L' ? 'pinangPlayerLeft' : 'pinangPlayerRight');
+          if (gameMode === 'pinang') {
+            imgEl.src = player === 'L' ? 'https://game.afifedu.com/panjat_pinang/standleft.png' : 'https://game.afifedu.com/panjat_pinang/standright.png';
+            imgEl.classList.remove('climbing');
+            imgEl.classList.add('standing');
+          }
+
           generateQ(player);
         }
       }, 1000);
@@ -729,7 +868,6 @@
           p.ans = Math.pow(p.n1, p.n2);
           qText = `${p.n1}<sup>${p.n2}</sup> = ?`;
           break;
-
         case 'exponent':
           const type = Math.floor(Math.random() * 5);
           const base = Math.floor(Math.random() * 5) + 2;
@@ -761,7 +899,6 @@
             qText = `(${base}<sup>${m}</sup> × ${base}<sup>${n}</sup>) ÷ ${base}<sup>${k}</sup> = ${base}<sup>?</sup>`;
           }
           break;
-
         case 'multiply':
         default:
           p.n1 = Math.floor(Math.random() * maxMultiplier) + 1;
@@ -800,42 +937,69 @@
       p.totalTimeSec += timeSpent;
       p.attempts++;
 
+      const imgEl = document.getElementById(player === 'L' ? 'pinangPlayerLeft' : 'pinangPlayerRight');
+
       if (parseInt(p.input, 10) === p.ans) {
         playCorrectSound();
         p.score += 1;
 
         document.getElementById(player === 'L' ? 'scoreLeft' : 'scoreRight').innerText = 
-          `${player === 'L' ? nameL : nameR}`;
+          `${player === 'L' ? nameL : nameR} (Skor: ${p.score})`;
 
-        // Menggeser posisi tali/bar
-        ropePos += (player === 'L' ? -PULL_PIXELS : PULL_PIXELS);
-        document.getElementById('ropeGroup').style.transform = `translateX(${ropePos}px)`;
-        updateProgressBar();
+        if (gameMode === 'tug') {
+          ropePos += (player === 'L' ? -PULL_PIXELS : PULL_PIXELS);
+          document.getElementById('ropeGroup').style.transform = `translateX(${ropePos}px)`;
 
-        // Pengecekan kemenangan murni berdasarkan ujung bar (habis/mencapai batas WIN_LIMIT)
-        if (Math.abs(ropePos) >= WIN_LIMIT) {
-          playWinSound();
-          clearInterval(pLeft.timer);
-          clearInterval(pRight.timer);
-
-          // Jika ropePos <= -WIN_LIMIT berarti bar biru habis (artinya Pemain Kanan menang karena mendorong ke kiri, atau sebaliknya tergantung sudut pandang, mari kita sesuaikan: bar biru habis jika ropePos >= WIN_LIMIT, bar merah habis jika ropePos <= -WIN_LIMIT)
-          // Berdasarkan kalkulasi progress bar:
-          // leftPercent = 50 - (ropePos / WIN_LIMIT) * 50. Jika ropePos = WIN_LIMIT, leftPercent = 0% (Bar Biru Habis -> Pemain Kanan Menang)
-          // Jika ropePos = -WIN_LIMIT, rightPercent = 0% (Bar Merah Habis -> Pemain Kiri Menang)
-          const winName = ropePos <= -WIN_LIMIT ? nameL : nameR;
-          document.getElementById('winTitle').innerText = `${winName.toUpperCase()} MENANG! 🎉`;
-
-          showStats();
-          document.getElementById('winOverlay').classList.add('active');
+          if (Math.abs(ropePos) >= WIN_LIMIT_TUG) {
+            endGame(ropePos <= -WIN_LIMIT_TUG ? nameL : nameR);
+          } else {
+            generateQ(player);
+          }
         } else {
-          generateQ(player);
+          // Ketika jawaban benar, gunakan aset memanjat (asset 1 & 2) yang lebih mepet dengan pohon
+          imgEl.src = player === 'L' ? 'https://game.afifedu.com/panjat_pinang/climbleft.png' : 'https://game.afifedu.com/panjat_pinang/climbright.png';
+          imgEl.classList.remove('standing');
+          imgEl.classList.add('climbing');
+
+          const stepClimb = WIN_LIMIT_PINANG / targetPinangQuestions;
+
+          if (player === 'L') {
+            pinangPosL = Math.min(WIN_LIMIT_PINANG, pinangPosL + stepClimb);
+            imgEl.style.bottom = pinangPosL + 'px';
+          } else {
+            pinangPosR = Math.min(WIN_LIMIT_PINANG, pinangPosR + stepClimb);
+            imgEl.style.bottom = pinangPosR + 'px';
+          }
+
+          if (p.score >= targetPinangQuestions || pinangPosL >= WIN_LIMIT_PINANG || pinangPosR >= WIN_LIMIT_PINANG) {
+            endGame(player === 'L' ? nameL : nameR);
+          } else {
+            generateQ(player);
+          }
         }
       } else {
         playWrongSound();
         p.wrong++;
         p.input = '';
         display.innerText = '';
+
+        // Jika salah, ubah kembali ke posisi berdiri (asset 3 & 4)
+        if (gameMode === 'pinang') {
+          imgEl.src = player === 'L' ? 'https://game.afifedu.com/panjat_pinang/standleft.png' : 'https://game.afifedu.com/panjat_pinang/standright.png';
+          imgEl.classList.remove('climbing');
+          imgEl.classList.add('standing');
+        }
       }
+    }
+
+    function endGame(winnerName) {
+      playWinSound();
+      clearInterval(pLeft.timer);
+      clearInterval(pRight.timer);
+
+      document.getElementById('winTitle').innerText = `${winnerName.toUpperCase()} MENANG! 🎉`;
+      showStats();
+      document.getElementById('winOverlay').classList.add('active');
     }
 
     function showStats() {
@@ -865,17 +1029,40 @@
     }
 
     function startGame() {
+      const inGameMode = document.getElementById('gameModeInput').value;
       const inL = document.getElementById('nameLeftInput').value.trim();
       const inR = document.getElementById('nameRightInput').value.trim();
       const inOp = document.getElementById('opModeInput').value;
       const inTime = parseInt(document.getElementById('timeLimitInput').value, 10);
+      const inTarget = parseInt(document.getElementById('pinangTargetInput').value, 10);
 
+      gameMode = inGameMode;
       if (inL) nameL = inL;
       if (inR) nameR = inR;
       if (inOp) opMode = inOp;
       if (!isNaN(inTime) && inTime >= 3) QUESTION_TIMEOUT = inTime;
+      if (!isNaN(inTarget) && inTarget >= 1) targetPinangQuestions = inTarget;
 
-      document.getElementById('targetInstruction').innerText = `Habiskan bar lawan dengan menjawab soal dengan benar!`;
+      if (gameMode === 'pinang') {
+        document.getElementById('mainModalTitle').innerText = '🌴 Panjat Pinang Matematika';
+        document.getElementById('browserTabTitle').innerText = '🌴 Panjat Pinang Matematika';
+        document.getElementById('stageGameTitle').innerText = 'Panjat Pinang Matematika';
+        document.getElementById('targetInstruction').innerText = `Jawab ${targetPinangQuestions} soal dengan benar untuk mencapai puncak!`;
+        
+        document.getElementById('tugArena').style.display = 'none';
+        document.getElementById('pinangArena').style.display = 'flex';
+        document.getElementById('centerDashedLine').style.display = 'none';
+      } else {
+        document.getElementById('mainModalTitle').innerText = '🎮 Tarik Tambang Matematika';
+        document.getElementById('browserTabTitle').innerText = '🧩 Tarik Tambang Matematika';
+        document.getElementById('stageGameTitle').innerText = 'Tarik Tambang Matematika';
+        document.getElementById('targetInstruction').innerText = 'Habiskan bar lawan dengan menjawab soal dengan benar!';
+
+        document.getElementById('tugArena').style.display = 'flex';
+        document.getElementById('pinangArena').style.display = 'none';
+        document.getElementById('centerDashedLine').style.display = 'block';
+      }
+
       document.getElementById('setupOverlay').style.display = 'none';
 
       resetGame();
@@ -888,15 +1075,32 @@
       clearInterval(pRight.timer);
 
       ropePos = 0;
+      pinangPosL = 0;
+      pinangPosR = 0;
+
       pLeft.score = 0; pLeft.wrong = 0; pLeft.attempts = 0; pLeft.totalTimeSec = 0;
       pRight.score = 0; pRight.wrong = 0; pRight.attempts = 0; pRight.totalTimeSec = 0;
 
       document.getElementById('scoreLeft').innerText = nameL;
       document.getElementById('scoreRight').innerText = nameR;
       document.getElementById('ropeGroup').style.transform = 'translateX(0px)';
-      document.getElementById('winOverlay').classList.remove('active');
+      
+      const pLeftImg = document.getElementById('pinangPlayerLeft');
+      const pRightImg = document.getElementById('pinangPlayerRight');
 
-      updateProgressBar();
+      pLeftImg.style.bottom = '0px';
+      pRightImg.style.bottom = '0px';
+      
+      // Reset ke aset berdiri (asset 3 & 4) dengan kelas .standing
+      pLeftImg.src = 'https://game.afifedu.com/panjat_pinang/standleft.png';
+      pLeftImg.classList.remove('climbing');
+      pLeftImg.classList.add('standing');
+
+      pRightImg.src = 'https://game.afifedu.com/panjat_pinang/standright.png';
+      pRightImg.classList.remove('climbing');
+      pRightImg.classList.add('standing');
+
+      document.getElementById('winOverlay').classList.remove('active');
 
       document.getElementById('qLeft').innerText = '0 × 0 = ?';
       document.getElementById('qRight').innerText = '0 × 0 = ?';
